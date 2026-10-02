@@ -35,11 +35,24 @@ dead. The button sets `download` with the real versioned filename, so the file
 lands on disk as `PriceTracker-Setup-1.2.11.exe`, and shows the version and size
 read from that same file.
 
-`latest.exe` is gitignored — a 12 MB binary does not belong in history. Run
-`npm run stage` before `npm run build`; point `PRICE_TRACKER_REPO` at the app
-checkout if it is not at `C:/price-tracker`. The script warns when the newest
-setup and `price_tracker.py`'s `APP_VERSION` disagree, because that mismatch is
-what makes an app offer itself as an update forever.
+**The binary is committed.** It looks wrong for a 12 MB file, but deployment
+builds from a git clone: if `latest.exe` were ignored, the deployed site would
+carry the button and not the file, and the download would 404. Publishing a new
+build is therefore:
+
+```bash
+npm run stage
+git add public/downloads && git commit -m "Stage installer 1.2.12"
+git push
+```
+
+`info.json` is regenerated on every stage, so the size and version shown on the
+page always describe the file that is actually being served.
+
+Point `PRICE_TRACKER_REPO` at the app checkout if it is not at
+`C:/price-tracker`. The script warns when the newest setup and
+`price_tracker.py`'s `APP_VERSION` disagree, because that mismatch is what makes
+an app offer itself as an update forever.
 
 ## Deploying
 

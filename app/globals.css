@@ -187,7 +187,11 @@ a { color: inherit; }
   display: flex;
   flex-wrap: wrap;
   gap: var(--s-md);
-  align-items: center;
+  /* flex-start, not center: the download group is taller than the quiet button
+     because it carries a size line underneath. Centering them vertically
+     pushed that line down past the button row, where it read as part of the
+     button and collided with whatever sat beside it. */
+  align-items: flex-start;
 }
 
 /* --------------------------------------------------------------------------
@@ -407,13 +411,24 @@ a { color: inherit; }
 .dl {
   display: inline-flex;
   flex-direction: column;
+  align-items: flex-start;
   gap: var(--s-xs);
 }
 .dl-meta {
   font-size: var(--fs-label);
+  line-height: var(--lh-label);
   color: var(--text-faint);
+  /* Tucked under the button and aligned to its text edge, not centred under
+     the whole block. It has to read as a caption on the button, not as a
+     third control in the row. */
   padding-inline-start: var(--s-xs);
+  white-space: nowrap;
 }
+
+/* On the closing download band the metadata sits under a full-width button, so
+   it centers with it rather than hugging one edge. */
+.download .dl { align-items: center; }
+.download .dl-meta { padding-inline-start: 0; }
 
 /* --------------------------------------------------------------------------
    Screenshot frame — reserved for the app captures. Kept in the layout now so

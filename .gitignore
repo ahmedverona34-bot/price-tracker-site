@@ -12,5 +12,8 @@ yarn-error.log*
 next-env.d.ts
 tsconfig.json
 
-# Staged installer: copied in by scripts/stage-installer.mjs, not committed.
-public/downloads/latest.exe
+
+# NOTE: public/downloads/latest.exe IS committed on purpose.
+# Vercel builds from a git clone, so the installer has to be in the tree or
+# the download button 404s in production. It changes only when you publish
+# a build (npm run stage && git commit).

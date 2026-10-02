@@ -102,7 +102,6 @@ export default function Page() {
           <div className="wrap">
             <div className="section-head">
               <h2>{t.howTitle}</h2>
-              <p>{t.howLead}</p>
             </div>
             <div className="steps">
               {t.steps.map((s) => (

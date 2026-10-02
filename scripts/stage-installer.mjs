@@ -97,6 +97,26 @@ async function main() {
 
   console.log(`staged ${basename(srcPath)} -> public/downloads/latest.exe (${mb} MB)`);
   console.log(`version ${version}${appVersion ? ` (app reports ${appVersion})` : ""}`);
+
+  // The installer has to be committed: deployment builds from a git clone, so
+  // an ignored latest.exe means a deployed site with a button and no file.
+  // Remind at stage time rather than discovering it as a 404 in production.
+  try {
+    const { execFileSync } = await import("node:child_process");
+    const ignored = execFileSync("git", ["check-ignore", dest], {
+      cwd: root,
+      encoding: "utf8",
+    });
+    if (ignored.trim()) {
+      console.warn(
+        `\n  WARNING: public/downloads/latest.exe is git-ignored (${ignored.trim()}).\n` +
+          `  A deployed build clones the repo, so the download would 404.\n` +
+          `  Remove that rule from .gitignore and commit the file.\n`
+      );
+    }
+  } catch {
+    // Not a git repo, or git is unavailable: nothing to check.
+  }
 }
 
 main().catch((e) => {
