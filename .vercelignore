@@ -1,0 +1,8 @@
+# Vercel builds from the git tree; only what the site needs should ship.
+node_modules
+.next
+out
+.git
+README.md
+.env*.local
+*.log
