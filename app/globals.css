@@ -346,8 +346,23 @@ html, body {
   padding-block: var(--s-xl);
   border-bottom: 1px solid var(--line-soft);
 }
+/* Stacked, the 20px title and 16px body sat 8px apart and read as one
+   paragraph. The rows also had no space between them — only a hairline — so
+   six features became one undifferentiated block. Here each pair is a small
+   group with air above it, and the hairlines are dropped in favour of the
+   spacing: a rule drawn that close to the text it divides adds nothing. */
 @media (max-width: 760px) {
-  .feature { grid-template-columns: 1fr; gap: var(--s-sm); }
+  .feature {
+    grid-template-columns: 1fr;
+    gap: var(--s-xs);
+    padding-top: var(--s-xl);
+    padding-bottom: 0;
+    border-bottom: 0;
+  }
+  .features { border-top: 0; }
+  /* The first row has nothing above it to separate from, so it keeps the
+     section's own rhythm instead of opening with a gap. */
+  .feature:first-child { padding-top: 0; }
 }
 .feature dt {
   font-weight: 700;
@@ -375,10 +390,18 @@ html, body {
   counter-increment: step;
   content: counter(step);
   display: block;
-  margin-bottom: var(--s-sm);
+  margin-bottom: var(--s-xs);
   font-size: var(--fs-label);
   font-weight: 700;
+  line-height: var(--lh-label);
   color: var(--primary-fill);
+}
+/* On a phone the three steps stack, so the 24px column gap becomes a horizontal
+   rule of white space between them. 50px from a number to its own heading read
+   as two separate items; the number belongs to the sentence under it. */
+@media (max-width: 760px) {
+  .steps { gap: var(--s-lg); }
+  .step { padding-top: 0; }
 }
 .step h3 {
   margin: 0 0 var(--s-sm);
@@ -424,7 +447,10 @@ html, body {
   }
   .spec tr { padding-block: var(--s-md); border-bottom: 1px solid var(--line-soft); }
   .spec tr:last-child { border-bottom: 0; }
-  .spec th { font-size: var(--fs-label); padding-bottom: 2px; }
+  /* 12px label above a 16px value, on a phone, in a room lit by daylight: the
+     label was the hardest text on the page to read. It drops its label role and
+     becomes a plain caption at body size, with the value kept at its weight. */
+  .spec th { font-size: var(--fs-sm); padding-bottom: 2px; color: var(--text-faint); }
   .spec td { font-size: var(--fs-body); }
 }
 
@@ -485,10 +511,24 @@ html, body {
 }
 
 /* The 96px mark is right beside text on a desktop; alone in a column on a
-   phone it is decoration occupying a third of the first screen. */
-@media (max-width: 640px) {
-  .mark-panel { padding: var(--s-lg); gap: var(--s-md); }
-  .mark-panel img { width: 64px; height: 64px; }
+   phone it was decoration filling a third of the first screen and pushing the
+   fold past the download button. It becomes a single line instead: icon and
+   text side by side, which is all it ever carried. */
+@media (max-width: 760px) {
+  .mark-panel {
+    flex-direction: row;
+    align-items: center;
+    gap: var(--s-md);
+    padding: var(--s-md) var(--s-lg);
+  }
+  .mark-panel img {
+    width: 44px;
+    height: 44px;
+    border-radius: var(--r-lg);
+    flex-shrink: 0;
+  }
+  .mark-panel strong { font-size: var(--fs-body); }
+  .mark-panel p { font-size: var(--fs-sm); line-height: var(--lh-sm); }
 }
 
 /* --------------------------------------------------------------------------
