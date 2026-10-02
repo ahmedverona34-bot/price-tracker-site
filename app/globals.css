@@ -84,6 +84,14 @@ a { color: inherit; }
   .section { padding-block: var(--s-3xl); }
 }
 
+/* Nothing on the page may push the document sideways. A wide table or an
+   overlong unbreakable string (a URL, a file name) is contained here rather
+   than left to widen the page for the reader to scroll sideways. */
+html, body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
 /* --------------------------------------------------------------------------
    Header
    -------------------------------------------------------------------------- */
@@ -110,8 +118,12 @@ a { color: inherit; }
   text-decoration: none;
   font-weight: 700;
   font-size: var(--fs-sm);
+  /* The brand is the one thing that must never be truncated: it is the only
+     label that says what this page is. */
+  white-space: nowrap;
+  flex-shrink: 0;
 }
-.brand img { width: 22px; height: 22px; border-radius: var(--r); }
+.brand img { width: 22px; height: 22px; border-radius: var(--r); flex-shrink: 0; }
 
 .site-nav {
   display: flex;
@@ -124,8 +136,19 @@ a { color: inherit; }
   color: var(--text-muted);
   font-size: var(--fs-sm);
   transition: color var(--t) var(--ease);
+  white-space: nowrap;
 }
 .site-nav a:hover { color: var(--text); }
+
+/* Below 760px the brand, three section links and the language toggle cannot
+   share one row on a 320px screen. The section links go away rather than
+   shrink: the page is one screenful long, so scrolling it is a worse cost than
+   losing in-page anchors that only save a swipe. The toggle stays, because
+   language is the one control a visitor may actually need. */
+@media (max-width: 760px) {
+  .site-header .wrap { gap: var(--s-sm); }
+  .site-nav a { display: none; }
+}
 
 /* Language toggle: two text buttons in a hairline group, not a pill badge. */
 .lang {
@@ -133,6 +156,7 @@ a { color: inherit; }
   border: 1px solid var(--line);
   border-radius: var(--r-lg);
   overflow: hidden;
+  flex-shrink: 0;
 }
 .lang button {
   appearance: none;
@@ -145,6 +169,7 @@ a { color: inherit; }
   line-height: 1;
   padding: 7px 10px;
   cursor: pointer;
+  white-space: nowrap;
   transition: background var(--t) var(--ease), color var(--t) var(--ease);
 }
 .lang button:hover { color: var(--text); }
@@ -175,6 +200,12 @@ a { color: inherit; }
   /* The app's own headline size. Anything larger would be the "oversized hero
      headline" tell. */
 }
+/* Arabic at 32px fills a 320px screen in two very short lines, so the display
+   size steps down one notch on phones. The scale is the app's own; this is the
+   same curve the app uses at its minimum window width. */
+@media (max-width: 420px) {
+  .hero h1 { font-size: var(--fs-h2); line-height: var(--lh-h2); }
+}
 .hero p {
   margin: 0 0 var(--s-xl);
   max-width: var(--measure);
@@ -192,6 +223,20 @@ a { color: inherit; }
      pushed that line down past the button row, where it read as part of the
      button and collided with whatever sat beside it. */
   align-items: flex-start;
+}
+/* On a phone the two controls stack full width. Tapping a target that spans
+   the column is easier than aiming at a half-width button, and the download is
+   the one action the page exists for. */
+@media (max-width: 520px) {
+  .hero-actions { flex-direction: column; align-items: stretch; }
+  .hero-actions .dl,
+  .hero-actions .btn { width: 100%; }
+  .hero-actions .dl .btn { justify-content: center; }
+  /* align-items has to follow, not just text-align: the caption is a flex item,
+     so centering its text while the box stays start-aligned left it hugging
+     one edge under a full-width button. */
+  .hero-actions .dl { align-items: center; }
+  .hero-actions .dl-meta { padding-inline-start: 0; }
 }
 
 /* --------------------------------------------------------------------------
@@ -213,6 +258,18 @@ a { color: inherit; }
   transition: background var(--t) var(--ease),
               border-color var(--t) var(--ease),
               color var(--t) var(--ease);
+}
+/* A finger needs more room than a cursor: 44px is the accepted minimum target,
+   and the buttons here sit at 34px on a desktop mouse. */
+@media (pointer: coarse) {
+  .btn { padding: 14px 22px; }
+  .lang button { padding: 12px 13px; }
+  .site-nav a { padding-block: 8px; }
+}
+/* Touch also applies on a narrow desktop window, where pointer:coarse does not
+   fire but the target is still small and hard to hit. */
+@media (max-width: 760px) {
+  .lang button { padding: 11px 12px; }
 }
 .btn-primary {
   background: var(--primary-fill);
@@ -356,6 +413,21 @@ a { color: inherit; }
 .spec td { font-weight: 700; }
 .spec tr:last-child th, .spec tr:last-child td { border-bottom: 0; }
 
+/* On a narrow screen two columns squeeze both cells until the values wrap
+   mid-number. Stacking them keeps each value on one line. */
+@media (max-width: 480px) {
+  .spec th, .spec td {
+    display: block;
+    width: auto;
+    padding: 0;
+    border: 0;
+  }
+  .spec tr { padding-block: var(--s-md); border-bottom: 1px solid var(--line-soft); }
+  .spec tr:last-child { border-bottom: 0; }
+  .spec th { font-size: var(--fs-label); padding-bottom: 2px; }
+  .spec td { font-size: var(--fs-body); }
+}
+
 /* --------------------------------------------------------------------------
    Download band — the one place the CTA gets the full cobalt fill
    -------------------------------------------------------------------------- */
@@ -369,6 +441,12 @@ a { color: inherit; }
   align-items: center;
   gap: var(--s-xl);
   justify-content: space-between;
+}
+@media (max-width: 640px) {
+  .download { padding: var(--s-xl); flex-direction: column; align-items: stretch; }
+  .download .dl, .download .dl .btn { width: 100%; }
+  .download .dl .btn { justify-content: center; }
+  .download h2 { font-size: var(--fs-h3); line-height: var(--lh-h3); }
 }
 .download h2 {
   margin: 0 0 var(--s-sm);
@@ -402,6 +480,16 @@ a { color: inherit; }
 }
 .site-footer a { color: var(--text-muted); text-decoration: none; }
 .site-footer a:hover { color: var(--text); }
+@media (max-width: 480px) {
+  .site-footer .wrap { flex-direction: column; align-items: flex-start; gap: var(--s-sm); }
+}
+
+/* The 96px mark is right beside text on a desktop; alone in a column on a
+   phone it is decoration occupying a third of the first screen. */
+@media (max-width: 640px) {
+  .mark-panel { padding: var(--s-lg); gap: var(--s-md); }
+  .mark-panel img { width: 64px; height: 64px; }
+}
 
 /* --------------------------------------------------------------------------
    Download button + the line under it naming the file, version and size.
