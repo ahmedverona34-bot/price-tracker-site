@@ -16,10 +16,32 @@ Marketing site for the Price Tracker Windows app.
 
 ```bash
 npm install
+npm run stage   # copy the newest installer into public/downloads/
 npm run dev     # http://localhost:3000
 npm run build   # static prerender
 npm start
 ```
+
+## Downloading the installer
+
+The download button serves the setup from this site, so a visitor never lands on
+a GitHub release page. `scripts/stage-installer.mjs` copies the newest
+`PriceTracker-Setup-<ver>.exe` out of the app repo's `dist-installer/` to
+`public/downloads/latest.exe` and writes `info.json` beside it.
+
+The served name is fixed (`latest.exe`) on purpose: publishing a new build is a
+file copy and nothing else, so no link in an old email or a cached page can go
+dead. The button sets `download` with the real versioned filename, so the file
+lands on disk as `PriceTracker-Setup-1.2.11.exe`, and shows the version and size
+read from that same file.
+
+`latest.exe` is gitignored — a 12 MB binary does not belong in history. Run
+`npm run stage` before `npm run build`; point `PRICE_TRACKER_REPO` at the app
+checkout if it is not at `C:/price-tracker`. The script warns when the newest
+setup and `price_tracker.py`'s `APP_VERSION` disagree, because that mismatch is
+what makes an app offer itself as an update forever.
+
+## Deploying
 
 ## Adding a screenshot
 
@@ -32,10 +54,10 @@ already styled in `globals.css`.
 Static output. Any of these work:
 
 ```bash
-npx vercel --prod              # Vercel
-npx @11ty/eleventy             # not needed, Next handles it
-npm run build && npx serve out # any static host
+npx vercel --prod                  # Vercel
+npm run build && npx serve out     # any static host
 ```
 
 On GitHub Pages, set the output directory to `.next` via a Pages action, or add
-`output: "export"` to `next.config.mjs` and publish `out/`.
+`output: "export"` to `next.config.mjs` and publish `out/`. Either way, run
+`npm run stage` first so the installer is in the bundle.

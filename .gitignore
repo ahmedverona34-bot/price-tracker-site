@@ -11,3 +11,6 @@ yarn-error.log*
 .vercel
 next-env.d.ts
 tsconfig.json
+
+# Staged installer: copied in by scripts/stage-installer.mjs, not committed.
+public/downloads/latest.exe

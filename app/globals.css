@@ -400,6 +400,22 @@ a { color: inherit; }
 .site-footer a:hover { color: var(--text); }
 
 /* --------------------------------------------------------------------------
+   Download button + the line under it naming the file, version and size.
+   The metadata is deliberately quiet: it answers "how big is this?" without
+   becoming a badge the eye lands on before the button itself.
+   -------------------------------------------------------------------------- */
+.dl {
+  display: inline-flex;
+  flex-direction: column;
+  gap: var(--s-xs);
+}
+.dl-meta {
+  font-size: var(--fs-label);
+  color: var(--text-faint);
+  padding-inline-start: var(--s-xs);
+}
+
+/* --------------------------------------------------------------------------
    Screenshot frame — reserved for the app captures. Kept in the layout now so
    the page does not jump when the images land.
    -------------------------------------------------------------------------- */

@@ -9,11 +9,19 @@
 
 import { useCallback, useEffect, useState } from "react";
 import LangToggle from "../components/LangToggle";
+import DownloadButton from "../components/DownloadButton";
 import { copy } from "../lib/content";
 
 const REPO = "https://github.com/ahmedverona34-bot/price-tracker";
-const RELEASE =
-  "https://github.com/ahmedverona34-bot/price-tracker/releases/latest";
+
+/* The installer is served from this site, not from GitHub.
+ *
+ * /downloads/latest.exe is a fixed name written by scripts/stage-installer.mjs,
+ * so publishing a new build never changes this URL and never leaves a dead link
+ * in someone's browser. The `download` attribute makes the browser save it
+ * under the real versioned name, and keeps the visitor on this page instead of
+ * navigating away to a release list they then have to read. */
+const DOWNLOAD = "/downloads/latest.exe";
 
 const KEY = "pt-lang";
 
@@ -72,9 +80,7 @@ export default function Page() {
               <h1>{t.hero.title}</h1>
               <p>{t.hero.lead}</p>
               <div className="hero-actions">
-                <a className="btn btn-primary" href={RELEASE}>
-                  {t.hero.cta}
-                </a>
+                <DownloadButton href={DOWNLOAD} label={t.hero.cta} showMeta />
                 <a className="btn btn-quiet" href="#specs">
                   {t.hero.secondary}
                 </a>
@@ -154,9 +160,7 @@ export default function Page() {
                 <h2>{t.downloadTitle}</h2>
                 <p>{t.downloadBody}</p>
               </div>
-              <a className="btn btn-primary" href={RELEASE}>
-                {t.ctaDownload}
-              </a>
+              <DownloadButton href={DOWNLOAD} label={t.ctaDownload} />
             </div>
           </div>
         </section>
