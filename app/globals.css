@@ -1,0 +1,430 @@
+@import "./tokens.css";
+
+/* ===========================================================================
+   Font — Thmanyah Sans, self-hosted, the app's only typeface.
+   Both scripts are covered by these faces, which is the whole reason the site
+   needs no second family.
+   =========================================================================== */
+@font-face {
+  font-family: "Thmanyah Sans";
+  src: url("/fonts/thmanyahsans-Light.otf") format("opentype");
+  font-weight: 300; font-display: swap;
+}
+@font-face {
+  font-family: "Thmanyah Sans";
+  src: url("/fonts/thmanyahsans-Regular.otf") format("opentype");
+  font-weight: 400; font-display: swap;
+}
+@font-face {
+  font-family: "Thmanyah Sans";
+  src: url("/fonts/thmanyahsans-Medium.otf") format("opentype");
+  font-weight: 500; font-display: swap;
+}
+@font-face {
+  font-family: "Thmanyah Sans";
+  src: url("/fonts/thmanyahsans-Bold.otf") format("opentype");
+  font-weight: 700; font-display: swap;
+}
+@font-face {
+  font-family: "Thmanyah Sans";
+  src: url("/fonts/thmanyahsans-Black.otf") format("opentype");
+  font-weight: 900; font-display: swap;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  scroll-behavior: smooth;
+  /* The rail in the app is 68px; the same number keeps the sticky header from
+     hiding a section title when a link is followed. */
+  scroll-padding-top: 84px;
+}
+
+body {
+  margin: 0;
+  background: var(--ground);
+  color: var(--text);
+  font-family: "Thmanyah Sans", system-ui, sans-serif;
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+}
+
+img { display: block; max-width: 100%; }
+a { color: inherit; }
+
+:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+  border-radius: var(--r);
+}
+
+::selection { background: var(--primary-fill); color: #fff; }
+
+/* Latin runs inside Arabic copy (product names, file names) stay LTR so they
+   do not reorder. Arabic keeps its natural RTL flow. */
+.num, .ltr { direction: ltr; unicode-bidi: isolate; }
+
+/* --------------------------------------------------------------------------
+   Layout shell
+   -------------------------------------------------------------------------- */
+.wrap {
+  width: 100%;
+  max-width: 1120px;
+  margin-inline: auto;
+  padding-inline: var(--s-xl);
+}
+@media (max-width: 640px) {
+  .wrap { padding-inline: var(--s-lg); }
+}
+
+.section { padding-block: var(--s-4xl); }
+@media (max-width: 640px) {
+  .section { padding-block: var(--s-3xl); }
+}
+
+/* --------------------------------------------------------------------------
+   Header
+   -------------------------------------------------------------------------- */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  height: 56px;                      /* the app's topbar height */
+  display: flex;
+  align-items: center;
+  background: rgba(12, 14, 18, 0.92);
+  border-bottom: 1px solid var(--line-soft);
+}
+.site-header .wrap {
+  display: flex;
+  align-items: center;
+  gap: var(--s-lg);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: var(--s-sm);
+  text-decoration: none;
+  font-weight: 700;
+  font-size: var(--fs-sm);
+}
+.brand img { width: 22px; height: 22px; border-radius: var(--r); }
+
+.site-nav {
+  display: flex;
+  gap: var(--s-lg);
+  margin-inline-start: auto;
+  align-items: center;
+}
+.site-nav a {
+  text-decoration: none;
+  color: var(--text-muted);
+  font-size: var(--fs-sm);
+  transition: color var(--t) var(--ease);
+}
+.site-nav a:hover { color: var(--text); }
+
+/* Language toggle: two text buttons in a hairline group, not a pill badge. */
+.lang {
+  display: inline-flex;
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+}
+.lang button {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: var(--text-faint);
+  font-family: inherit;
+  font-size: var(--fs-label);
+  font-weight: 500;
+  line-height: 1;
+  padding: 7px 10px;
+  cursor: pointer;
+  transition: background var(--t) var(--ease), color var(--t) var(--ease);
+}
+.lang button:hover { color: var(--text); }
+.lang button[aria-pressed="true"] {
+  background: var(--surface-high);
+  color: var(--text);
+}
+
+/* --------------------------------------------------------------------------
+   Hero — one message, one action. No metric tiles, no eyebrow chip.
+   -------------------------------------------------------------------------- */
+.hero { padding-block: var(--s-4xl) var(--s-3xl); }
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  gap: var(--s-3xl);
+  align-items: center;
+}
+@media (max-width: 900px) {
+  .hero-grid { grid-template-columns: 1fr; gap: var(--s-2xl); }
+}
+
+.hero h1 {
+  margin: 0 0 var(--s-lg);
+  font-size: var(--fs-h1);
+  line-height: var(--lh-h1);
+  font-weight: 700;
+  /* The app's own headline size. Anything larger would be the "oversized hero
+     headline" tell. */
+}
+.hero p {
+  margin: 0 0 var(--s-xl);
+  max-width: var(--measure);
+  font-size: var(--fs-lead);
+  line-height: var(--lh-lead);
+  color: var(--text-muted);
+}
+
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-md);
+  align-items: center;
+}
+
+/* --------------------------------------------------------------------------
+   Buttons
+   -------------------------------------------------------------------------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-sm);
+  padding: 12px 20px;
+  border-radius: var(--r-lg);
+  border: 1px solid transparent;
+  font-family: inherit;
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  line-height: var(--lh-sm);
+  text-decoration: none;
+  cursor: pointer;
+  transition: background var(--t) var(--ease),
+              border-color var(--t) var(--ease),
+              color var(--t) var(--ease);
+}
+.btn-primary {
+  background: var(--primary-fill);
+  color: #fff;
+  box-shadow: var(--shadow-cta);
+}
+.btn-primary:hover { background: var(--primary-hover); box-shadow: var(--shadow-cta-hover); }
+.btn-quiet {
+  background: transparent;
+  border-color: var(--line);
+  color: var(--text);
+}
+.btn-quiet:hover { border-color: var(--line-strong); background: var(--surface-low); }
+
+.hero-note {
+  font-size: var(--fs-label);
+  color: var(--text-faint);
+}
+
+/* --------------------------------------------------------------------------
+   App mark — the 3x3 grid is the app's own icon, reused as the visual anchor
+   -------------------------------------------------------------------------- */
+.mark-panel {
+  border: 1px solid var(--line-soft);
+  border-radius: var(--r-xl);
+  background: var(--surface-low);
+  padding: var(--s-xl);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-lg);
+}
+.mark-panel img {
+  width: 96px;
+  height: 96px;
+  border-radius: var(--r-xl);
+}
+.mark-panel p {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: var(--fs-sm);
+  line-height: var(--lh-sm);
+}
+
+/* --------------------------------------------------------------------------
+   Section headings — no eyebrow label above, no numbering
+   -------------------------------------------------------------------------- */
+.section-head { max-width: var(--measure); margin-bottom: var(--s-2xl); }
+.section-head h2 {
+  margin: 0 0 var(--s-sm);
+  font-size: var(--fs-h2);
+  line-height: var(--lh-h2);
+  font-weight: 700;
+}
+.section-head p {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+}
+
+/* --------------------------------------------------------------------------
+   Feature list — a definition list, not a grid of icon cards. Icon tiles above
+   headings and identical five-card grids are both on the slop list.
+   -------------------------------------------------------------------------- */
+.features {
+  display: grid;
+  gap: 0;
+  border-top: 1px solid var(--line-soft);
+}
+.feature {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: var(--s-xl);
+  padding-block: var(--s-xl);
+  border-bottom: 1px solid var(--line-soft);
+}
+@media (max-width: 760px) {
+  .feature { grid-template-columns: 1fr; gap: var(--s-sm); }
+}
+.feature dt {
+  font-weight: 700;
+  font-size: var(--fs-h3);
+  line-height: var(--lh-h3);
+}
+.feature dd {
+  margin: 0;
+  color: var(--text-muted);
+  max-width: var(--measure);
+  line-height: var(--lh-body);
+}
+
+/* --------------------------------------------------------------------------
+   Steps — genuinely ordered, so numbering is earned here
+   -------------------------------------------------------------------------- */
+.steps {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--s-xl);
+  counter-reset: step;
+}
+.step { position: relative; padding-top: var(--s-lg); }
+.step::before {
+  counter-increment: step;
+  content: counter(step);
+  display: block;
+  margin-bottom: var(--s-sm);
+  font-size: var(--fs-label);
+  font-weight: 700;
+  color: var(--primary-fill);
+}
+.step h3 {
+  margin: 0 0 var(--s-sm);
+  font-size: var(--fs-h3);
+  line-height: var(--lh-h3);
+  font-weight: 700;
+}
+.step p {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: var(--fs-sm);
+  line-height: var(--lh-sm);
+}
+
+/* --------------------------------------------------------------------------
+   Spec table — the honest numbers, from the build
+   -------------------------------------------------------------------------- */
+.spec { width: 100%; border-collapse: collapse; font-size: var(--fs-sm); }
+.spec caption {
+  text-align: start;
+  color: var(--text-faint);
+  font-size: var(--fs-label);
+  padding-bottom: var(--s-sm);
+}
+.spec th, .spec td {
+  text-align: start;
+  padding: var(--s-md) 0;
+  border-bottom: 1px solid var(--line-soft);
+  vertical-align: top;
+}
+.spec th { font-weight: 500; color: var(--text-muted); width: 45%; }
+.spec td { font-weight: 700; }
+.spec tr:last-child th, .spec tr:last-child td { border-bottom: 0; }
+
+/* --------------------------------------------------------------------------
+   Download band — the one place the CTA gets the full cobalt fill
+   -------------------------------------------------------------------------- */
+.download {
+  border: 1px solid var(--line);
+  border-radius: var(--r-xl);
+  background: var(--surface-low);
+  padding: var(--s-2xl);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s-xl);
+  justify-content: space-between;
+}
+.download h2 {
+  margin: 0 0 var(--s-sm);
+  font-size: var(--fs-h2);
+  line-height: var(--lh-h2);
+  font-weight: 700;
+}
+.download p {
+  margin: 0;
+  color: var(--text-muted);
+  max-width: 52ch;
+  line-height: var(--lh-body);
+}
+
+/* --------------------------------------------------------------------------
+   Footer
+   -------------------------------------------------------------------------- */
+.site-footer {
+  border-top: 1px solid var(--line-soft);
+  padding-block: var(--s-2xl);
+  margin-top: var(--s-4xl);
+}
+.site-footer .wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-lg);
+  align-items: center;
+  justify-content: space-between;
+  color: var(--text-faint);
+  font-size: var(--fs-label);
+}
+.site-footer a { color: var(--text-muted); text-decoration: none; }
+.site-footer a:hover { color: var(--text); }
+
+/* --------------------------------------------------------------------------
+   Screenshot frame — reserved for the app captures. Kept in the layout now so
+   the page does not jump when the images land.
+   -------------------------------------------------------------------------- */
+.shot {
+  border: 1px solid var(--line-soft);
+  border-radius: var(--r-xl);
+  overflow: hidden;
+  background: var(--surface-low);
+}
+.shot img { width: 100%; height: auto; }
+.shot figcaption {
+  padding: var(--s-md) var(--s-lg);
+  font-size: var(--fs-label);
+  color: var(--text-faint);
+  border-top: 1px solid var(--line-soft);
+}
+
+/* --------------------------------------------------------------------------
+   Reduced motion
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

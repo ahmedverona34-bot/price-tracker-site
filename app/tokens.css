@@ -1,0 +1,79 @@
+/* ===========================================================================
+   Design tokens for the Price Tracker site.
+
+   Taken verbatim from the desktop app's ui/tokens.css so the marketing site
+   and the app it describes are literally the same design system: one cobalt
+   accent, one green reserved for discounts, Thmanyah Sans at 300/400/500/700/900
+   and never 600, no letter-spacing (it breaks Arabic joining), flat surfaces
+   and 150ms transitions.
+
+   The app's DESIGN.md is the source of truth; anything here that drifts from
+   it is a bug, not a new decision.
+   =========================================================================== */
+
+:root {
+  /* -- surfaces ---------------------------------------------------------- */
+  --ground:            #0c0e12;   /* page ground */
+  --surface-low:       #1a1c20;   /* cards */
+  --surface:           #1e2024;   /* raised panels */
+  --surface-high:      #282a2e;
+  --surface-highest:   #333539;
+
+  /* -- text -------------------------------------------------------------- */
+  --text:              #e2e2e8;
+  --text-muted:        #c3c6d7;
+  --text-faint:        #8d90a0;
+
+  /* -- lines ------------------------------------------------------------- */
+  --line:              #434655;
+  --line-soft:         rgba(67, 70, 85, 0.30);
+  --line-strong:       rgba(67, 70, 85, 0.50);
+
+  /* -- accents ----------------------------------------------------------- */
+  --primary:           #b4c5ff;   /* tinted text */
+  --primary-fill:      #2563eb;   /* solid CTA / active states */
+  --primary-hover:     #0053db;
+  --primary-wash:      rgba(180, 197, 255, 0.10);
+  --green:             #4edea3;   /* discounts only */
+  --green-fill:        #00a572;
+  --green-wash:        rgba(78, 222, 163, 0.15);
+  --amber:             #ffb95f;
+  --error:             #ffb4ab;
+
+  /* -- radii (pinned in px, exactly like the app) ----------------------- */
+  --r:                 4px;
+  --r-lg:              8px;
+  --r-xl:              12px;
+  --r-full:            9999px;
+
+  /* -- spacing ----------------------------------------------------------- */
+  --s-xs:  4px;
+  --s-sm:  8px;
+  --s-md:  12px;
+  --s-lg:  16px;
+  --s-xl:  24px;
+  --s-2xl: 32px;
+  --s-3xl: 48px;
+  --s-4xl: 64px;
+
+  /* -- type scale (from the app, verbatim sizes) ------------------------- */
+  --fs-metric:   28px;  --lh-metric:   36px;
+  --fs-h1:       32px;  --lh-h1:       40px;
+  --fs-h2:       24px;  --lh-h2:       32px;
+  --fs-h3:       20px;  --lh-h3:       28px;
+  --fs-lead:     17px;  --lh-lead:     28px;
+  --fs-body:     16px;  --lh-body:     26px;
+  --fs-sm:       14px;  --lh-sm:       22px;
+  --fs-data:     13px;
+  --fs-label:    12px;  --lh-label:    16px;
+
+  /* -- motion ------------------------------------------------------------ */
+  --t:           150ms;
+  --ease:        cubic-bezier(0.2, 0, 0.2, 1);
+
+  /* -- elevation: the CTA shadow is the only glow in the system ---------- */
+  --shadow-cta:  0 4px 14px rgba(37, 99, 235, 0.35);
+  --shadow-cta-hover: 0 6px 20px rgba(37, 99, 235, 0.50);
+
+  --measure:     68ch;   /* 65-75 characters, per the type rules */
+}
