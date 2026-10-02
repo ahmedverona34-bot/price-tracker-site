@@ -27,27 +27,34 @@ npm start
 The download button serves the setup from this site, so a visitor never lands on
 a GitHub release page. `scripts/stage-installer.mjs` copies the newest
 `PriceTracker-Setup-<ver>.exe` out of the app repo's `dist-installer/` to
-`public/downloads/latest.exe` and writes `info.json` beside it.
+`public/downloads/PriceTracker-Setup-<ver>.exe` and writes `info.json` beside
+it, removing any older staged copy.
 
-The served name is fixed (`latest.exe`) on purpose: publishing a new build is a
-file copy and nothing else, so no link in an old email or a cached page can go
-dead. The button sets `download` with the real versioned filename, so the file
-lands on disk as `PriceTracker-Setup-1.2.11.exe`, and shows the version and size
-read from that same file.
+**The file is served under its versioned name, not as `latest.exe`.** A stable
+`latest.exe` is tidier, but the browser takes the filename from the URL: a
+`download` attribute only renames after the response starts, and a
+`Content-Disposition` from the host outranks it anyway. Both were tried, and the
+save dialog still offered `latest.exe`. Naming the file for its version means
+the path *is* the filename, so the dialog is right the first time.
+
+`info.json` is read at build time by `lib/info.js` inside the server component,
+not fetched in the browser. Fetching it left the button rendering against a
+placeholder URL, which a click could download instead of the installer. Baking it
+in makes the button correct on the first paint, works without JavaScript, and
+removes a request that made the save dialog feel slow. A missing or incomplete
+`info.json` fails the build rather than shipping a wrong version number.
 
 **The binary is committed.** It looks wrong for a 12 MB file, but deployment
-builds from a git clone: if `latest.exe` were ignored, the deployed site would
-carry the button and not the file, and the download would 404. Publishing a new
-build is therefore:
+builds from a git clone: if it were ignored, the deployed site would carry the
+button and not the file, and the download would 404. Publishing a new build is
+therefore:
 
 ```bash
 npm run stage
-git add public/downloads && git commit -m "Stage installer 1.2.12"
+git add public/downloads      # old versioned file is deleted by the stage
+git commit -m "Stage installer 1.2.12"
 git push
 ```
-
-`info.json` is regenerated on every stage, so the size and version shown on the
-page always describe the file that is actually being served.
 
 Point `PRICE_TRACKER_REPO` at the app checkout if it is not at
 `C:/price-tracker`. The script warns when the newest setup and

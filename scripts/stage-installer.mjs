@@ -13,7 +13,7 @@
  * only used for the console output; the staged copy is always latest.exe.
  */
 
-import { readdir, copyFile, stat, mkdir, readFile, writeFile } from "node:fs/promises";
+import { readdir, copyFile, stat, mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { existsSync } from "node:fs";
 import { join, dirname, basename } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -82,34 +82,55 @@ async function main() {
   }
 
   await mkdir(OUT_DIR, { recursive: true });
-  const dest = join(OUT_DIR, "latest.exe");
-  await copyFile(srcPath, dest);
 
-  const { size } = await stat(dest);
+  // The installer is served under its real versioned name, not as latest.exe.
+  //
+  // A stable latest.exe sounds tidier, but it makes the browser offer exactly
+  // that name in the save dialog. The `download` attribute that would rename it
+  // is applied once the response starts, and a Content-Disposition sent by the
+  // host outranks the attribute entirely — so the rename either loses the race
+  // or never happens, and the user is left with "latest.exe" on disk.
+  // Serving the versioned name makes the URL itself the filename: nothing to
+  // rename, no attribute to race, and the save dialog is right the first time.
+  const staged = join(OUT_DIR, `PriceTracker-Setup-${version}.exe`);
+  await copyFile(srcPath, staged);
+
+  // Drop setups left by earlier stages. The directory should hold exactly the
+  // build being published: a stale copy is dead weight in the deployed bundle
+  // and makes it ambiguous which file the page is offering.
+  for (const name of await readdir(OUT_DIR)) {
+    const full = join(OUT_DIR, name);
+    if (name.startsWith("PriceTracker-Setup-") && full !== staged) {
+      await rm(full);
+      console.log(`removed superseded ${name}`);
+    }
+  }
+
+  const { size } = await stat(staged);
   const mb = (size / 1024 / 1024).toFixed(2);
 
-  // A tiny manifest the page reads for the size and version it shows, so the
-  // numbers on the site come from the file that is actually being served.
+  // What the page reads to render the button, so the name, version and size on
+  // screen all describe the file that is actually being served.
   await writeFile(
     join(OUT_DIR, "info.json"),
-    JSON.stringify({ version, size, mb, file: basename(srcPath) }, null, 2)
+    JSON.stringify({ version, size, mb, file: basename(staged), href: `/downloads/${basename(staged)}` }, null, 2)
   );
 
-  console.log(`staged ${basename(srcPath)} -> public/downloads/latest.exe (${mb} MB)`);
+  console.log(`staged ${basename(srcPath)} -> public/downloads/${basename(staged)} (${mb} MB)`);
   console.log(`version ${version}${appVersion ? ` (app reports ${appVersion})` : ""}`);
 
   // The installer has to be committed: deployment builds from a git clone, so
-  // an ignored latest.exe means a deployed site with a button and no file.
+  // an ignored installer means a deployed site with a button and no file.
   // Remind at stage time rather than discovering it as a 404 in production.
   try {
     const { execFileSync } = await import("node:child_process");
-    const ignored = execFileSync("git", ["check-ignore", dest], {
+    const ignored = execFileSync("git", ["check-ignore", staged], {
       cwd: root,
       encoding: "utf8",
     });
     if (ignored.trim()) {
       console.warn(
-        `\n  WARNING: public/downloads/latest.exe is git-ignored (${ignored.trim()}).\n` +
+        `\n  WARNING: ${basename(staged)} is git-ignored (${ignored.trim()}).\n` +
           `  A deployed build clones the repo, so the download would 404.\n` +
           `  Remove that rule from .gitignore and commit the file.\n`
       );
